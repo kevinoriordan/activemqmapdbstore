@@ -8,6 +8,7 @@ import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.region.policy.PendingMessageLimitStrategy;
 import org.apache.activemq.broker.region.policy.PolicyEntry;
 import org.apache.activemq.broker.region.policy.PolicyMap;
+import org.apache.activemq.usage.SystemUsage;
 import org.apache.activemq.usage.TempUsage;
 import org.junit.After;
 import org.junit.Before;
@@ -74,8 +75,7 @@ public class EndToEndTest {
         sendMessage(0);
         MessageConsumer consumer = session.createConsumer(destination);
         Message receivedMessage = consumer.receive();
-        assertThat(receivedMessage, instanceOf(TextMessage.class));
-        assertThat(((TextMessage)receivedMessage).getText(), is("Test 0"));
+        assertThatMessageTextIs(receivedMessage, "Test 0");
     }
 
     private void sendMessage(int index) throws JMSException {
@@ -91,17 +91,20 @@ public class EndToEndTest {
             sendMessage(i);
         }
         MessageConsumer consumer = session.createConsumer(destination);
-        Message receivedMessage = null;
+        Message receivedMessage;
         int count = 0;
         do {
-            receivedMessage = consumer.receive(100);
+            receivedMessage = consumer.receiveNoWait();
             if (receivedMessage != null) {
-                assertThat(receivedMessage, instanceOf(TextMessage.class));
-                assertThat(((TextMessage)receivedMessage).getText(), is("Test "+count));
+                assertThatMessageTextIs(receivedMessage, "Test " + count);
                 count++;
             }
         } while (receivedMessage != null);
         assertThat(count, is(20000));
+      
+    private void assertThatMessageTextIs(Message message, String text) throws JMSException {
+        assertThat(message, instanceOf(TextMessage.class));
+        assertThat(((TextMessage)message).getText(), is(text));
     }
 
     @After

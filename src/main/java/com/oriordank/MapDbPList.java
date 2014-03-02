@@ -7,18 +7,19 @@ import org.mapdb.*;
 
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.Map;
 
 public class MapDbPList implements PList {
 
-    protected final BTreeMap<String, byte[]> store;
+    protected final BTreeMap<Long, PListEntry> store;
     private DB db;
     private String name;
+    private long head = Long.MAX_VALUE / 2;
+    private long tail = Long.MAX_VALUE / 2;
 
     public MapDbPList(String name) {
         this.name = name;
         db = DBMaker.newDirectMemoryDB().transactionDisable().asyncWriteFlushDelay(100).compressionEnable().make();
-        store = db.createTreeMap(name).nodeSize(120).keySerializer(BTreeKeySerializer.STRING).valueSerializer(Serializer.BYTE_ARRAY).make();
+        store = db.createTreeMap(name).nodeSize(120).keySerializer(BTreeKeySerializer.ZERO_OR_POSITIVE_LONG).make();
     }
 
     @Override
@@ -34,19 +35,23 @@ public class MapDbPList implements PList {
 
     @Override
     public Object addFirst(String id, ByteSequence bs) throws IOException {
-        store.put(id, bs.getData());
-        return id;
+        PListEntry entry = new PListEntry(id, bs, head);
+        store.put(head, entry);
+        head--;
+        return head+1;
     }
 
     @Override
     public Object addLast(String id, ByteSequence bs) throws IOException {
-        store.put(id, bs.getData());
-        return id;
+        PListEntry entry = new PListEntry(id, bs, tail);
+        store.put(tail, entry);
+        tail++;
+        return tail-1;
     }
 
     @Override
     public boolean remove(Object position) throws IOException {
-        byte[] data = store.remove(position);
+        PListEntry data = store.remove(position);
         return data != null;
     }
 
@@ -57,7 +62,7 @@ public class MapDbPList implements PList {
 
     @Override
     public PListIterator iterator() throws IOException {
-        final Iterator<Map.Entry<String, byte[]>> plistIterator = store.entrySet().iterator();
+        final Iterator<PListEntry> pListIterator = store.values().iterator();
         return new PListIterator() {
             @Override
             public void release() {
@@ -65,18 +70,17 @@ public class MapDbPList implements PList {
 
             @Override
             public boolean hasNext() {
-                return plistIterator.hasNext();
+                return pListIterator.hasNext();
             }
 
             @Override
             public PListEntry next() {
-                Map.Entry<String, byte[]> next = plistIterator.next();
-                return new PListEntry(next.getKey(), new ByteSequence(next.getValue()), next.getKey());
+                return pListIterator.next();
             }
 
             @Override
             public void remove() {
-                plistIterator.remove();
+                pListIterator.remove();
             }
         };
     }
@@ -84,8 +88,8 @@ public class MapDbPList implements PList {
     @Override
     public long size() {
         long size = 0;
-        for (byte[] bytes : store.values()) {
-            size += bytes.length;
+        for (PListEntry entry: store.values()) {
+            size += entry.getByteSequence().getLength();
         }
         return size;
     }
