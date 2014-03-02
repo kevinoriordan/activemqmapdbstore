@@ -2,9 +2,11 @@ package com.oriordank.mapdbserializers;
 
 import org.apache.activemq.command.MessageId;
 import org.apache.activemq.command.ProducerId;
+import org.apache.activemq.command.SessionId;
 import org.mapdb.BTreeKeySerializer;
 import org.mapdb.DataOutput2;
 
+import javax.jms.Session;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -26,9 +28,12 @@ public class MessageIdSerializer extends BTreeKeySerializer<MessageId> implement
     @Override
     public Object[] deserialize(DataInput in, int start, int end, int size) throws IOException {
         long producerSequenceId = in.readLong();
+        long sessionIdValue = in.readLong();
+        long producerIdValue = in.readLong();
+        SessionId sessionId = new SessionId();
         ProducerId producerId = new ProducerId();
         MessageId messageId = new MessageId();
-        return new Object[0];
+        return new Object[] {messageId};
     }
 
     @Override

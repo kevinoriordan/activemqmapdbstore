@@ -21,6 +21,6 @@ public class MessageSerializer implements Serializer<Message>, Serializable{
 
     @Override
     public int fixedSize() {
-        return 0;
+        return -1;
     }
 }

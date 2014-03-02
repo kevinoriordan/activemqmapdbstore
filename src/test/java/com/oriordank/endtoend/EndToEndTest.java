@@ -92,7 +92,7 @@ public class EndToEndTest {
         Message receivedMessage;
         int count = 0;
         do {
-            receivedMessage = consumer.receiveNoWait();
+            receivedMessage = consumer.receive(100);
             if (receivedMessage != null) {
                 assertThatMessageTextIs(receivedMessage, "Test " + count);
                 count++;
