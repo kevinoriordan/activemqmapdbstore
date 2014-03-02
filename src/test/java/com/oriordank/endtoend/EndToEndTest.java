@@ -1,15 +1,12 @@
 package com.oriordank.endtoend;
 
-import com.oriordank.MapDbPListStore;
+import com.oriordank.plist.MapDbPListStore;
 import com.oriordank.MapDbPersistenceAdapter;
 import com.oriordank.MapDbPersistenceAdapterFactory;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerService;
-import org.apache.activemq.broker.region.policy.PendingMessageLimitStrategy;
 import org.apache.activemq.broker.region.policy.PolicyEntry;
 import org.apache.activemq.broker.region.policy.PolicyMap;
-import org.apache.activemq.usage.SystemUsage;
-import org.apache.activemq.usage.TempUsage;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -90,6 +87,7 @@ public class EndToEndTest {
         for (int i=0; i<20000;i++) {
             sendMessage(i);
         }
+        System.out.println("finished inserting");
         MessageConsumer consumer = session.createConsumer(destination);
         Message receivedMessage;
         int count = 0;
@@ -101,6 +99,7 @@ public class EndToEndTest {
             }
         } while (receivedMessage != null);
         assertThat(count, is(20000));
+    }
       
     private void assertThatMessageTextIs(Message message, String text) throws JMSException {
         assertThat(message, instanceOf(TextMessage.class));

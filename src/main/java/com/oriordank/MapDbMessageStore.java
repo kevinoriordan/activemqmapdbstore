@@ -1,5 +1,7 @@
 package com.oriordank;
 
+import com.oriordank.mapdbserializers.MessageIdSerializer;
+import com.oriordank.mapdbserializers.MessageSerializer;
 import org.apache.activemq.broker.ConnectionContext;
 import org.apache.activemq.command.ActiveMQDestination;
 import org.apache.activemq.command.Message;
@@ -21,7 +23,8 @@ public class MapDbMessageStore extends AbstractMessageStore {
     public MapDbMessageStore(ActiveMQDestination destination) {
         super(destination);
         DB db = DBMaker.newDirectMemoryDB().transactionDisable().asyncWriteFlushDelay(100).compressionEnable().make();
-        store = db.createTreeMap(destination.getQualifiedName()).nodeSize(120).make();
+        store = db.createTreeMap(destination.getQualifiedName()).keySerializer(new MessageIdSerializer()).
+                valueSerializer(new MessageSerializer()).nodeSize(120).make();
     }
 
     @Override

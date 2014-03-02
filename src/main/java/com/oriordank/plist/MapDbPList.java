@@ -1,5 +1,6 @@
-package com.oriordank;
+package com.oriordank.plist;
 
+import com.oriordank.mapdbserializers.PListEntrySerializer;
 import org.apache.activemq.store.PList;
 import org.apache.activemq.store.PListEntry;
 import org.apache.activemq.util.ByteSequence;
@@ -19,7 +20,8 @@ public class MapDbPList implements PList {
     public MapDbPList(String name) {
         this.name = name;
         db = DBMaker.newDirectMemoryDB().transactionDisable().asyncWriteFlushDelay(100).compressionEnable().make();
-        store = db.createTreeMap(name).nodeSize(120).keySerializer(BTreeKeySerializer.ZERO_OR_POSITIVE_LONG).make();
+        store = db.createTreeMap(name).nodeSize(120).keySerializer(BTreeKeySerializer.ZERO_OR_POSITIVE_LONG).
+                valueSerializer(new PListEntrySerializer()).make();
     }
 
     @Override
@@ -30,7 +32,6 @@ public class MapDbPList implements PList {
     @Override
     public void destroy() throws IOException {
         store.clear();
-        db.close();
     }
 
     @Override
@@ -38,7 +39,7 @@ public class MapDbPList implements PList {
         PListEntry entry = new PListEntry(id, bs, head);
         store.put(head, entry);
         head--;
-        return head+1;
+        return head + 1;
     }
 
     @Override
@@ -46,7 +47,7 @@ public class MapDbPList implements PList {
         PListEntry entry = new PListEntry(id, bs, tail);
         store.put(tail, entry);
         tail++;
-        return tail-1;
+        return tail - 1;
     }
 
     @Override
@@ -87,10 +88,6 @@ public class MapDbPList implements PList {
 
     @Override
     public long size() {
-        long size = 0;
-        for (PListEntry entry: store.values()) {
-            size += entry.getByteSequence().getLength();
-        }
-        return size;
+        return store.size();
     }
 }

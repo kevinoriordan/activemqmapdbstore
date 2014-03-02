@@ -1,9 +1,10 @@
-package com.oriordank;
+package com.oriordank.plist;
 
 import org.apache.activemq.store.PList;
 import org.apache.activemq.store.PListStore;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -13,7 +14,11 @@ public class MapDbPListStore implements PListStore {
 
     @Override
     public File getDirectory() {
-        return null;
+        try {
+            return File.createTempFile("temp",".tmp").getParentFile();
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     @Override
