@@ -26,6 +26,7 @@ public class MapDbMessageStore extends AbstractMessageStore {
 
     @Override
     public void addMessage(ConnectionContext connectionContext, Message message) throws IOException {
+        System.out.println("Adding message to persistence store");
         store.put(message.getMessageId(), message);
         message.incrementReferenceCount();
     }
