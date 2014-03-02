@@ -2,6 +2,8 @@ package com.oriordank.mapdbserializers;
 
 import org.apache.activemq.store.PListEntry;
 import org.apache.activemq.util.ByteSequence;
+import org.mapdb.DataInput2;
+import org.mapdb.DataOutput2;
 import org.mapdb.Serializer;
 
 import java.io.DataInput;
@@ -14,19 +16,19 @@ public class PListEntrySerializer implements Serializer<PListEntry>, Serializabl
     public void serialize(DataOutput out, PListEntry value) throws IOException {
         out.writeUTF(value.getId());
         ByteSequence bs = value.getByteSequence();
-        out.writeInt(bs.getLength());
+        DataOutput2.packInt(out, bs.getLength());
         out.write(bs.getData(), bs.getOffset(), bs.getLength());
-        out.writeLong((Long)value.getLocator());
+        DataOutput2.packLong(out, (Long)value.getLocator());
     }
 
     @Override
     public PListEntry deserialize(DataInput in, int available) throws IOException {
         String id = in.readUTF();
-        int length = in.readInt();
+        int length = DataInput2.unpackInt(in);
         byte[] bytes = new byte[length];
         in.readFully(bytes);
         ByteSequence bs = new ByteSequence(bytes);
-        long locator = in.readLong();
+        long locator = DataInput2.unpackLong(in);
         PListEntry entry = new PListEntry(id, bs, locator);
         return entry;
     }
