@@ -6,7 +6,7 @@
 
     <groupId>activemq-mapdb-store</groupId>
     <artifactId>activemq-mapdb-store</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1</version>
 
     <dependencies>
         <dependency>
@@ -37,6 +37,12 @@
             <artifactId>activemq-broker</artifactId>
             <version>5.9.0</version>
             <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-kahadb-store</artifactId>
+            <version>5.9.0</version>
             <scope>test</scope>
         </dependency>
 

@@ -1,8 +1,6 @@
 package com.oriordank.endtoend;
 
 import com.oriordank.plist.MapDbPListStore;
-import com.oriordank.MapDbPersistenceAdapter;
-import com.oriordank.MapDbPersistenceAdapterFactory;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.region.policy.PolicyEntry;
@@ -50,9 +48,6 @@ public class EndToEndTest {
 
     private void setupService() throws Exception {
         service = new BrokerService();
-        MapDbPersistenceAdapter persistenceAdapter = new MapDbPersistenceAdapter();
-        service.setPersistenceAdapter(persistenceAdapter);
-        service.setPersistenceFactory(new MapDbPersistenceAdapterFactory());
         service.setPersistent(true);
         service.setTempDataStore(new MapDbPListStore());
         service.addConnector(BROKER_URL);
