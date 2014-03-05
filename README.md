@@ -1,4 +1,4 @@
 activemqmapdbstore
 ==================
 
-ActiveMQ MapDB Off heap Temp Storage
+ActiveMQ MapDB Off heap temp storage
