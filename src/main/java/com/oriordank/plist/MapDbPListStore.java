@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+/**
+ * @org.apache.xbean.XBean element="mapDbTempStore"
+ */
 public class MapDbPListStore implements PListStore {
 
     private ConcurrentMap<String, PList> plists = new ConcurrentHashMap<String, PList>();
