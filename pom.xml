@@ -25,7 +25,7 @@
                             <namespace>http://oriordank.com/schema/mapdbstore</namespace>
                             <schema>${basedir}/target/classes/mapdbstore.xsd</schema>
                             <outputDir>${basedir}/target/classes</outputDir>
-                            <generateSpringSchemasFile>false</generateSpringSchemasFile>
+                            <generateSpringSchemasFile>true</generateSpringSchemasFile>
                         </configuration>
                         <goals>
                             <goal>mapping</goal>
