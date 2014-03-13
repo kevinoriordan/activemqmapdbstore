@@ -1,7 +1,9 @@
 ActiveMQ MapDB Store
 ==================
 
-ActiveMQ MapDB Off heap temp storage
+This project allows greater use of system memory for buffering messages whilst avoiding GC issues through heap offloading. In a similar vein to projects such as Terracotta Bigmemory or Apache DirectMemory.
+
+This project makes use of the open source MapDB (www.mapdb.org) for making use of direct memory allocation.
 
 Usage
 ========
